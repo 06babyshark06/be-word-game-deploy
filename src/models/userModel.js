@@ -16,10 +16,6 @@ const userSchema = mongoose.Schema({
     required: true,
     trim: true,
   },
-  image: {
-    type: String,
-    trim: true,
-  },
   joinedAt: {
     type: Date,
     default: Date.now,
