@@ -4,18 +4,19 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const register = async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, email } = req.body;
   try {
-    const user = await User.findOne({ name: username });
+    const user = await User.find({ name: username } || { email });
     if (user) res.status(400).json({ message: "User already exists" });
     const hashed = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ name: username, password: hashed });
-    req.login(newUser, (err) => {
-      if (err)
-        return res.status(500).json({ message: "Login after register failed" });
-      res.status(200).json({ message: "Register successful" });
+    const newUser = await User.create({
+      name: username,
+      password: hashed,
+      email,
     });
+    return res.status(200).json({ message: "User created successfully" });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "Register failed" });
   }
 };
@@ -41,7 +42,7 @@ const refresh = async (req, res) => {
   try {
     const payload = jwt.verify(refreshToken, process.env.REFRESH_SECRET);
     const user = await User.findOne({ _id: payload.id });
-    if (!user|| user.refreshToken !== refreshToken) return res.sendStatus(403);
+    if (!user || user.refreshToken !== refreshToken) return res.sendStatus(403);
     const accessToken = createAccessToken(user);
     res.json({ accessToken });
   } catch (err) {
@@ -59,7 +60,11 @@ const logout = async (req, res) => {
     if (!user) return res.sendStatus(204);
     user.refreshToken = null;
     await user.save();
-    res.clearCookie("refreshToken", { httpOnly: true, sameSite: "strict", secure: false });
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      sameSite: "strict",
+      secure: false,
+    });
   } catch (err) {
     res.clearCookie("refreshToken");
     return res.sendStatus(204);
