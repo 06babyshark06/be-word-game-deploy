@@ -22,6 +22,10 @@ const playerSchema = mongoose.Schema({
     totalGames: {
         type: Number,
         default: 0
+    },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     }
 },{timestamps: true})
 
