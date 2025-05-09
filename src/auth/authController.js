@@ -42,11 +42,13 @@ const refresh = async (req, res) => {
   if (!refreshToken) return res.sendStatus(401);
   try {
     const payload = jwt.verify(refreshToken, process.env.REFRESH_SECRET);
+    console.log(payload);
     const user = await User.findOne({ _id: payload.id });
-    if (!user || user.refreshToken !== refreshToken) return res.sendStatus(403);
+    if (!user) return res.sendStatus(403);
     const accessToken = createAccessToken(user);
     res.json({ accessToken });
   } catch (err) {
+    console.log(err);
     return res.sendStatus(403);
   }
 };

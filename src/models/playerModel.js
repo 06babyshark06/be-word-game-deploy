@@ -23,6 +23,9 @@ const playerSchema = mongoose.Schema({
         type: Number,
         default: 0
     },
+    avatar: {
+        type: String
+    },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
