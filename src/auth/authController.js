@@ -30,8 +30,8 @@ const login = async (req, res) => {
   await user.save();
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    sameSite: "strict",
-    secure: false,
+    sameSite: "None",
+    secure: true,
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
   res.status(200).json({ accessToken });
@@ -63,8 +63,8 @@ const logout = async (req, res) => {
     await user.save();
     res.clearCookie("refreshToken", {
       httpOnly: true,
-      sameSite: "strict",
-      secure: false,
+      sameSite: "None",
+      secure: true,
     });
   } catch (err) {
     res.clearCookie("refreshToken");
