@@ -73,4 +73,8 @@ const logout = async (req, res) => {
   return res.sendStatus(200);
 };
 
-export default { register, login, refresh, logout };
+const me = async (req, res) => {
+  res.status(200).json(req.user);
+};
+
+export default { register, login, refresh, logout, me };
